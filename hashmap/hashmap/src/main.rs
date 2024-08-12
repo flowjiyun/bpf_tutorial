@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::time::Duration;
 
-use aya::maps::{PerCpuArray, PerCpuHashMap};
+use aya::maps::PerCpuHashMap;
 use aya::programs::KProbe;
 use aya::{include_bytes_aligned, Bpf};
 use aya_log::BpfLogger;
