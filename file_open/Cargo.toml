@@ -1,0 +1,3 @@
+[workspace]
+resolver = "2"
+members = ["xtask", "file_open", "file_open-common"]
