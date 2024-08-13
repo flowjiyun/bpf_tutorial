@@ -7,15 +7,16 @@
 #![allow(dead_code)]
 
 use aya_ebpf::{helpers::bpf_get_current_uid_gid, macros::{kprobe, map}, maps::PerCpuHashMap, programs::ProbeContext};
+use hashmap_common::FileOpenInfo;
 
 mod binding;
 
-#[repr(C)]
-#[derive(Clone, Copy)]
+// #[repr(C)]
+// #[derive(Clone, Copy)]
 
-pub struct FileOpenInfo {
-    pub count: u64,
-}
+// pub struct FileOpenInfo {
+//     pub count: u64,
+// }
 
 #[map]
 static mut FILE_OPEN_COUNT: PerCpuHashMap<u32, FileOpenInfo> = PerCpuHashMap::with_max_entries(1024, 0);

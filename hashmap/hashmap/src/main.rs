@@ -5,19 +5,20 @@ use aya::maps::PerCpuHashMap;
 use aya::programs::KProbe;
 use aya::{include_bytes_aligned, Bpf};
 use aya_log::BpfLogger;
+use hashmap_common::FileOpenInfo;
 use log::{info, warn, debug};
 use tokio::signal;
-use aya::Pod;
+// use aya::Pod;
 
 
-#[repr(C)]
-#[derive(Clone, Copy)]
+// #[repr(C)]
+// #[derive(Clone, Copy)]
 
-pub struct FileOpenInfo {
-    pub count: u64,
-}
+// pub struct FileOpenInfo {
+//     pub count: u64,
+// }
 
-unsafe impl Pod for FileOpenInfo {}
+// unsafe impl Pod for FileOpenInfo {}
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
