@@ -60,15 +60,9 @@ async fn main() -> Result<(), anyhow::Error> {
                 for i in 0..events.read{
                     let buf = &mut buffers[i];
                     if let Ok(event) = parse_event(buf) {
-                        let file_path_cstr = unsafe {
-                            CStr::from_ptr(event.file_path.as_ptr() as *const c_char)
-                        };
-                        let task_name_cstr = unsafe {
-                            CStr::from_ptr(event.task_name.as_ptr() as *const c_char)
-                        };
-                        // let file_path = std::str::from_utf8(&event.file_path).unwrap();
-                        // let task_name = std::str::from_utf8(&event.task_name).unwrap();
-                        println!("uid : {}, pid : {}, task_name : {}, file_path : {}", event.uid, event.pid, task_name_cstr.to_str().unwrap(), file_path_cstr.to_str().unwrap());
+                        let file_path = CStr::from_bytes_until_nul(&event.file_path).unwrap().to_str().unwrap();
+                        let task_name = CStr::from_bytes_until_nul(&event.task_name).unwrap().to_str().unwrap();
+                        println!("uid : {}, pid : {}, task_name : {}, file_path : {}", event.uid, event.pid, task_name, file_path);
                     } else {
                         eprintln!("failed to parse event");
                     }
