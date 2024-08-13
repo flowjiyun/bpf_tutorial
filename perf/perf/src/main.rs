@@ -1,5 +1,5 @@
 
-use std::ffi::{c_char, CStr};
+use std::ffi::CStr;
 
 use aya::maps::AsyncPerfEventArray;
 use aya::programs::KProbe;
