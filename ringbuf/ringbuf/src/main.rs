@@ -1,9 +1,12 @@
+use std::ffi::CStr;
+
 use aya::maps::RingBuf;
 use aya::programs::KProbe;
 use aya::{include_bytes_aligned, Bpf};
 use aya_log::BpfLogger;
 use log::{warn, debug};
 use ringbuf_common::Event;
+use tokio::task;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -48,8 +51,9 @@ async fn main() -> Result<(), anyhow::Error> {
         if let Some(item) = ring_buf.next() {
             let buf = &*item;
             if let Ok(event) = parse_event(buf) {
-                let file_path = String::from_utf8_lossy(&event.file_path);
-                let task_name = String::from_utf8_lossy(&event.task_name);
+                let file_path = CStr::from_bytes_until_nul(&event.file_path).unwrap().to_str().unwrap();
+                let task_name = CStr::from_bytes_until_nul(&event.task_name).unwrap().to_str().unwrap();
+                // let task_name = String::from_utf8_lossy(&event.task_name);
                 println!("uid : {}, pid : {}, task_name : {}, file_path : {}", event.uid, event.pid, task_name, file_path);
             } else {
                 eprintln!("fail to parse event!");
