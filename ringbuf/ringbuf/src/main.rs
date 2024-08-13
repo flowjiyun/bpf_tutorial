@@ -2,8 +2,8 @@ use aya::maps::RingBuf;
 use aya::programs::KProbe;
 use aya::{include_bytes_aligned, Bpf};
 use aya_log::BpfLogger;
-use log::{info, warn, debug};
-use tokio::signal;
+use log::{warn, debug};
+use ringbuf_common::Event;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -43,9 +43,18 @@ async fn main() -> Result<(), anyhow::Error> {
     let mut ring_buf = RingBuf::try_from(bpf.map_mut("RINGBUF").unwrap()).unwrap();
 
     // let mut poll = poll_fd
+
     loop {
-
-
+        if let Some(item) = ring_buf.next() {
+            let buf = &*item;
+            if let Ok(event) = parse_event(buf) {
+                let file_path = String::from_utf8_lossy(&event.file_path);
+                let task_name = String::from_utf8_lossy(&event.task_name);
+                println!("uid : {}, pid : {}, task_name : {}, file_path : {}", event.uid, event.pid, task_name, file_path);
+            } else {
+                eprintln!("fail to parse event!");
+            }
+        }
     }
     // info!("Waiting for Ctrl-C...");
     // signal::ctrl_c().await?;
@@ -54,16 +63,12 @@ async fn main() -> Result<(), anyhow::Error> {
     // Ok(())
 }
 
-
-struct Guard<'a, T>(&'a mut PollFd<T>);
-impl<T> Guard<'_, T> {
-    fn inner_mut(&mut self) -> &mut T {
-        let Guard(PollFd(t)) = self;
-        t
+fn parse_event(buf: &[u8]) -> Result<Event, ()> {
+    if buf.len() < core::mem::size_of::<Event>() {
+        return Err(());
     }
-    fn clear_ready(&mut self) {}
-}
-struct PollFd<T>(T);
-fn poll_fd<T>(t: T) -> PollFd<T> {PollFd(t)}
-impl<T> PollFd<T> {
+    let event = unsafe {
+        core::ptr::read_unaligned(buf.as_ptr() as *const Event)
+    };
+    Ok(event)
 }
