@@ -6,7 +6,6 @@ use aya::{include_bytes_aligned, Bpf};
 use aya_log::BpfLogger;
 use log::{warn, debug};
 use ringbuf_common::Event;
-use tokio::task;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
