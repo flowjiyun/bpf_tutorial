@@ -42,7 +42,7 @@ fn try_file_open(ctx: ProbeContext) -> Result<u32, i64> {
         core::str::from_utf8_unchecked(bpf_probe_read_kernel_str_bytes(dname.name, &mut buf)?)
     };
 
-    info!(&ctx, "user_id : {} function security_file_open called : {}", uid, file_name_str);
+    // info!(&ctx, "user_id : {} function security_file_open called : {}", uid, file_name_str);
     Ok(0)
 }
 

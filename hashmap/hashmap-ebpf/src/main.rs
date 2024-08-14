@@ -30,14 +30,9 @@ pub fn hashmap(ctx: ProbeContext) -> u32 {
 }
 
 fn try_hashmap(_ctx: ProbeContext) -> Result<u32, i64> {
-    // let file:*mut file  = ctx.arg(0).ok_or(1i64)?;
     let uid = bpf_get_current_uid_gid() as u32;
 
     unsafe {
-        // let info: &FileOpenInfo = FILE_OPEN_COUNT.get(&uid).unwrap_or(&FileOpenInfo { count: 0 });
-        // let info = FileOpenInfo { count: info.count + 1 };  
-        // FILE_OPEN_COUNT.insert(&uid, &info, 0)?;
-
         if let Some(info_ptr) = FILE_OPEN_COUNT.get_ptr_mut(&uid) {
             let info = &mut *info_ptr;
             info.count += 1;

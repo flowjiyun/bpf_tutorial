@@ -44,26 +44,19 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let mut ring_buf = RingBuf::try_from(bpf.map_mut("RINGBUF").unwrap()).unwrap();
 
-    // let mut poll = poll_fd
-
     loop {
         if let Some(item) = ring_buf.next() {
             let buf = &*item;
             if let Ok(event) = parse_event(buf) {
                 let file_path = CStr::from_bytes_until_nul(&event.file_path).unwrap().to_str().unwrap();
                 let task_name = CStr::from_bytes_until_nul(&event.task_name).unwrap().to_str().unwrap();
-                // let task_name = String::from_utf8_lossy(&event.task_name);
                 println!("uid : {}, pid : {}, task_name : {}, file_path : {}", event.uid, event.pid, task_name, file_path);
             } else {
                 eprintln!("fail to parse event!");
             }
         }
     }
-    // info!("Waiting for Ctrl-C...");
-    // signal::ctrl_c().await?;
-    // info!("Exiting...");
 
-    // Ok(())
 }
 
 fn parse_event(buf: &[u8]) -> Result<Event, ()> {

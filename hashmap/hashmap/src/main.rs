@@ -71,7 +71,8 @@ async fn main() -> Result<(), anyhow::Error> {
                 }
 
                 for (uid, cnt) in total_map {
-                    info!("uid: {}, open count: {}", uid, cnt);
+                    // info!("uid: {}, open count: {}", uid, cnt);
+                    println!("uid: {}, open count: {}", uid, cnt);
                 }
             }
             _ = signal::ctrl_c() => {
