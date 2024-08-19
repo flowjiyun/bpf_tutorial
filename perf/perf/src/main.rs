@@ -62,7 +62,7 @@ async fn main() -> Result<(), anyhow::Error> {
                     if let Ok(event) = parse_event(buf) {
                         let file_path = CStr::from_bytes_until_nul(&event.file_path).unwrap().to_str().unwrap();
                         let task_name = CStr::from_bytes_until_nul(&event.task_name).unwrap().to_str().unwrap();
-                        println!("uid : {}, pid : {}, task_name : {}, file_path : {}", event.uid, event.pid, task_name, file_path);
+                        println!("uid : {}, pid : {}, ppid : {}, task_name : {}, file_path : {}, f_flag : {}, time : {}", event.uid, event.pid, event.ppid, task_name, file_path, event.f_flag, event.time);
                     } else {
                         eprintln!("failed to parse event");
                     }

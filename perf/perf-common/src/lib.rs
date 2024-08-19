@@ -9,6 +9,9 @@ const TASK_NAME_LEN: usize = 16;
 pub struct Event {
     pub uid: u32,
     pub pid: u32,
+    pub ppid: i32,
+    pub f_flag: u32,
+    pub time: u64,
     pub task_name: [u8; TASK_NAME_LEN],
     pub file_path: [u8; MAX_PATH_LEN],
 }
