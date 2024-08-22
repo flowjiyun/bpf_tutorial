@@ -6,8 +6,10 @@
 #![allow(non_camel_case_types)]
 #![allow(dead_code)]
 
-use aya_ebpf::{cty::c_void, helpers::{self, bpf_get_current_comm, bpf_get_current_pid_tgid, bpf_get_current_task, bpf_get_current_uid_gid, bpf_ktime_get_ns, bpf_probe_read_kernel, bpf_probe_read_kernel_str_bytes}, macros::{kprobe, map}, maps::{PerCpuArray, PerfEventArray}, programs::ProbeContext};
-use binding::{dentry, file, path, qstr, task_struct}; use perf_common::Event; mod binding;
+use aya_ebpf::{bpf_printk, cty::c_void, helpers::{self, bpf_get_current_comm, bpf_get_current_pid_tgid, bpf_get_current_task, bpf_get_current_uid_gid, bpf_ktime_get_ns, bpf_probe_read_kernel, bpf_probe_read_kernel_str_bytes}, macros::{kprobe, map}, maps::{PerCpuArray, PerfEventArray}, programs::ProbeContext};
+use binding::{dentry, file, path, qstr, task_struct};
+use perf_common::Event;
+mod binding;
 
 #[map]
 static mut EVENT_BUF: PerCpuArray<Event> = PerCpuArray::with_max_entries(1, 0);
@@ -67,8 +69,10 @@ fn try_perf(ctx: ProbeContext) -> Result<u32, i64> {
         bpf_probe_read_kernel_str_bytes(dname.name, &mut event.file_path)?;
         EVENTS.output(&ctx, event, 0);
     }
+    unsafe {
+        bpf_printk!(b"hi there! dec: %d, hex: 0x%08X", 42, 0x1234);
+    }
     // info!(&ctx, "function security_file_open called");
-
     Ok(0)
 }
 
